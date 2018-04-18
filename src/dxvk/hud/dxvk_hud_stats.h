@@ -3,7 +3,7 @@
 #include "../dxvk_stats.h"
 
 #include "dxvk_hud_config.h"
-#include "dxvk_hud_text.h"
+#include "dxvk_hud_renderer.h"
 
 namespace dxvk::hud {
   
@@ -24,9 +24,9 @@ namespace dxvk::hud {
     void update(
       const Rc<DxvkDevice>&   device);
     
-    HudPos renderText(
+    HudPos render(
       const Rc<DxvkContext>&  context,
-            HudTextRenderer&  renderer,
+            HudRenderer&      renderer,
             HudPos            position);
     
   private:
@@ -38,22 +38,22 @@ namespace dxvk::hud {
     
     HudPos printDrawCallStats(
       const Rc<DxvkContext>&  context,
-            HudTextRenderer&  renderer,
+            HudRenderer&      renderer,
             HudPos            position);
     
     HudPos printSubmissionStats(
       const Rc<DxvkContext>&  context,
-            HudTextRenderer&  renderer,
+            HudRenderer&      renderer,
             HudPos            position);
     
     HudPos printPipelineStats(
       const Rc<DxvkContext>&  context,
-            HudTextRenderer&  renderer,
+            HudRenderer&      renderer,
             HudPos            position);
     
     HudPos printMemoryStats(
       const Rc<DxvkContext>&  context,
-            HudTextRenderer&  renderer,
+            HudRenderer&      renderer,
             HudPos            position);
     
     static HudElements filterElements(HudElements elements);

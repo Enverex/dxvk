@@ -10,9 +10,10 @@ namespace dxvk::hud {
   : m_config        (config),
     m_device        (device),
     m_context       (m_device->createContext()),
-    m_textRenderer  (m_device, m_context),
+    m_renderer      (m_device, m_context),
     m_uniformBuffer (createUniformBuffer()),
     m_hudDeviceInfo (device),
+    m_hudFramerate  (config.elements),
     m_hudStats      (config.elements) {
     this->setupConstantState();
   }
@@ -31,12 +32,12 @@ namespace dxvk::hud {
       this->setupFramebuffer(size);
     }
       
-    m_hudFps.update();
+    m_hudFramerate.update();
     m_hudStats.update(m_device);
     
     this->beginRenderPass(recreateFbo);
     this->updateUniformBuffer();
-    this->renderText();
+    this->render();
     this->endRenderPass();
   }
   
@@ -64,23 +65,18 @@ namespace dxvk::hud {
   }
   
   
-  void Hud::renderText() {
-    m_textRenderer.beginFrame(m_context);
+  void Hud::render() {
+    m_renderer.beginFrame(m_context);
     
     HudPos position = { 8.0f, 24.0f };
     
     if (m_config.elements.test(HudElement::DeviceInfo)) {
-      position = m_hudDeviceInfo.renderText(
-        m_context, m_textRenderer, position);
+      position = m_hudDeviceInfo.render(
+        m_context, m_renderer, position);
     }
     
-    if (m_config.elements.test(HudElement::Framerate)) {
-      position = m_hudFps.renderText(
-        m_context, m_textRenderer, position);
-    }
-    
-    position = m_hudStats.renderText(
-      m_context, m_textRenderer, position);
+    position = m_hudFramerate.render(m_context, m_renderer, position);
+    position = m_hudStats    .render(m_context, m_renderer, position);
   }
   
   

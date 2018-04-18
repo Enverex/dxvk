@@ -35,16 +35,16 @@ namespace dxvk::hud {
    * will use this color for the most part.
    */
   struct HudColor {
-    float x;
-    float y;
-    float z;
-    float w;
+    float r;
+    float g;
+    float b;
+    float a;
   };
   
   /**
-   * \brief Text vertex
+   * \brief Vertex
    */
-  struct HudTextVertex {
+  struct HudVertex {
     HudPos      position;
     HudTexCoord texcoord;
     HudColor    color;
@@ -56,15 +56,15 @@ namespace dxvk::hud {
    * Can be used by the presentation backend to
    * display performance and driver information.
    */
-  class HudTextRenderer {
+  class HudRenderer {
     constexpr static VkDeviceSize MaxVertexCount = 1 << 16;
   public:
     
-    HudTextRenderer(
+    HudRenderer(
       const Rc<DxvkDevice>&   device,
       const Rc<DxvkContext>&  context);
     
-    ~HudTextRenderer();
+    ~HudRenderer();
     
     void beginFrame(
       const Rc<DxvkContext>&  context);
@@ -76,12 +76,26 @@ namespace dxvk::hud {
             HudColor          color,
       const std::string&      text);
     
+    void drawLines(
+      const Rc<DxvkContext>&  context,
+            size_t            vertexCount,
+      const HudVertex*        vertexData);
+    
   private:
+    
+    enum class Mode {
+      RenderNone,
+      RenderText,
+      RenderLines,
+    };
     
     std::array<uint8_t, 256> m_charMap;
     
+    Mode                m_mode;
+    
     Rc<DxvkShader>      m_vertShader;
-    Rc<DxvkShader>      m_fragShader;
+    Rc<DxvkShader>      m_textShader;
+    Rc<DxvkShader>      m_lineShader;
     
     Rc<DxvkImage>       m_fontImage;
     Rc<DxvkImageView>   m_fontView;
@@ -90,10 +104,17 @@ namespace dxvk::hud {
     Rc<DxvkBuffer>      m_vertexBuffer;
     size_t              m_vertexIndex = 0;
     
+    void setRenderMode(
+      const Rc<DxvkContext>&  context,
+            Mode              mode);
+    
     Rc<DxvkShader> createVertexShader(
       const Rc<DxvkDevice>& device);
     
-    Rc<DxvkShader> createFragmentShader(
+    Rc<DxvkShader> createTextShader(
+      const Rc<DxvkDevice>& device);
+    
+    Rc<DxvkShader> createLineShader(
       const Rc<DxvkDevice>& device);
     
     Rc<DxvkImage> createFontImage(

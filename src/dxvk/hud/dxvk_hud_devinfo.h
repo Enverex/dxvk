@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dxvk_hud_text.h"
+#include "dxvk_hud_renderer.h"
 
 namespace dxvk::hud {
   
@@ -17,9 +17,9 @@ namespace dxvk::hud {
     HudDeviceInfo(const Rc<DxvkDevice>& device);
     ~HudDeviceInfo();
     
-    HudPos renderText(
+    HudPos render(
       const Rc<DxvkContext>&  context,
-            HudTextRenderer&  renderer,
+            HudRenderer&      renderer,
             HudPos            position);
     
   private:
